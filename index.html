@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACME - Planta Macondo</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <main class="game">
+    <header class="topbar">
+      <div class="topbar__title">
+        <span>Sistema Oh cielos - ACME</span>
+      </div>
+      <p class="topbar__hint" id="user-display">Estado: Desconectado</p>
+    </header>
+
+    <div id="app-container" style="width: min(980px, 100%);"></div>
+
+    <section class="panel-gif">
+      <div class="gif-container" id="gif-box" onmouseenter="var c=document.getElementById('ost-cuack'); c.currentTime=0; c.play();">
+        <img src="media/img/pato.gif" alt="giff" class="gif-img" />
+      </div>
+    </section>
+  </main>
+
+  <button class="btn-music-float" onclick="var m=document.getElementById('ost'); if(m.paused){m.play(); this.textContent='♫ ON';}else{m.pause(); this.textContent='♫ OFF';}">♫ OFF</button>
+  
+  <audio id="ost" src="media/sound/Undertaleost.mp3" loop></audio>
+  <audio id="ost-cuack" src="media/sound/cuack.mp3"></audio>
+
+  <script type="module" src="./js/components/app-auth.js"></script>
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
