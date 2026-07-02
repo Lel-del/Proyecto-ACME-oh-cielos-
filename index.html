@@ -16,7 +16,70 @@
       <p class="topbar__hint" id="user-display">Estado: Desconectado</p>
     </header>
 
-    <div id="app-container" style="width: min(980px, 100%);"></div>
+    <div class="message" id="message" role="status" style="display: none;"></div>
+
+    <section class="panel" id="section-login">
+      <div class="card">
+        <h2 class="card__title">Control de Acceso - Planta Macondo</h2>
+        <form id="form-login" class="form" autocomplete="off">
+          <label class="label">
+            <span>Número de Identificación</span>
+            <input id="login-id" type="text" required placeholder="Ej: 10987654" />
+          </label>
+
+          <label class="label">
+            <span>Contraseña</span>
+            <input id="login-password" type="password" required placeholder="••••••••" />
+          </label>
+
+          <button class="btn" type="submit">Ingresar al Sistema</button>
+          <p class="small">¿No tienes cuenta? <a href="#" id="go-to-register" style="color: var(--accent);">Regístrate aquí</a></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel" id="section-register" style="display: none;">
+      <div class="card">
+        <h2 class="card__title">Registro de Personal - ACME</h2>
+        <form id="form-register" class="form" autocomplete="off">
+          <label class="label">
+            <span>Número de Identificación</span>
+            <input id="reg-id" type="text" required placeholder="Ej: 10987654" />
+          </label>
+
+          <label class="label">
+            <span>Nombre Completo</span>
+            <input id="reg-name" type="text" required placeholder="Ej: Coronel Aureliano Buendía" />
+          </label>
+
+          <label class="label">
+            <span>Cargo Administrativo / Operativo</span>
+            <input id="reg-role" type="text" required placeholder="Ej: Operario de Mezcla" />
+          </label>
+
+          <label class="label">
+            <span>Contraseña</span>
+            <input id="reg-password" type="password" required placeholder="••••••••" />
+          </label>
+
+          <label class="label">
+            <span>Confirmar Contraseña</span>
+            <input id="reg-confirm-password" type="password" required placeholder="••••••••" />
+          </label>
+
+          <button class="btn btn--alt" type="submit">Guardar y Registrar</button>
+          <p class="small">¿Ya tienes usuario? <a href="#" id="go-to-login" style="color: var(--accent-2);">Iniciar Sesión</a></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel" id="section-system" style="display: none;">
+      <div class="card">
+        <h2 class="card__title" style="color: var(--accent-2);">✓ Acceso Concedido</h2>
+        <p id="welcome-text">¡Hola! Has ingresado correctamente.</p>
+        <p>Próximamente aquí verás los módulos de Inventario y Producción de la planta Macondo.</p>
+      </div>
+    </section>
 
     <section class="panel-gif">
       <div class="gif-container" id="gif-box" onmouseenter="var c=document.getElementById('ost-cuack'); c.currentTime=0; c.play();">
@@ -30,7 +93,6 @@
   <audio id="ost" src="media/sound/Undertaleost.mp3" loop></audio>
   <audio id="ost-cuack" src="media/sound/cuack.mp3"></audio>
 
-  <script type="module" src="./js/components/app-auth.js"></script>
-  <script type="module" src="./js/main.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
