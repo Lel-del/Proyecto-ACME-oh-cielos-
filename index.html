@@ -74,10 +74,115 @@
     </section>
 
     <section class="panel" id="section-system" style="display: none;">
-      <div class="card">
-        <h2 class="card__title" style="color: var(--accent-2);">✓ Acceso Concedido</h2>
-        <p id="welcome-text">¡Hola! Has ingresado correctamente.</p>
-        <p>Próximamente aquí verás los módulos de Inventario y Producción de la planta Macondo.</p>
+      <div class="card" style="margin-bottom: 14px;">
+        <h2 class="card__title" style="color: var(--accent-2);">Panel de Control ACME</h2>
+        <p id="welcome-text"></p>
+        
+        <div style="display: flex; gap: 10px; margin-top: 14px;">
+          <button class="btn" id="btn-tab-inventario" style="width: auto;">📦 Inventario</button>
+          <button class="btn btn--alt" id="btn-tab-produccion" style="width: auto;">🏭 Producción</button>
+        </div>
+      </div>
+
+      <div id="sub-inventario" style="display: block;">
+        <div class="grid">
+          <div class="card">
+            <h3 class="card__title">Registrar Producto / Materia Prima</h3>
+            <form id="form-producto" class="form" autocomplete="off">
+              <label class="label">
+                <span>Código del Producto</span>
+                <input id="prod-codigo" type="text" required placeholder="Ej: MP-01 o PT-01" />
+              </label>
+              <label class="label">
+                <span>Nombre</span>
+                <input id="prod-nombre" type="text" required placeholder="Ej: Harina / Galleta" />
+              </label>
+              <label class="label">
+                <span>Proveedor</span>
+                <input id="prod-proveedor" type="text" required placeholder="Ej: Molinos S.A. o Interno" />
+              </label>
+              <label class="label" style="flex-direction: row; gap: 10px; align-items: center; margin: 6px 0;">
+                <input id="prod-es-terminado" type="checkbox" style="width: auto; margin: 0;" />
+                <span>¿Es un producto terminado (requiere fórmula)?</span>
+              </label>
+              
+              <div id="wrapper-formula" style="display: none; border-top: 1px dashed rgba(244, 240, 212, 0.2); padding-top: 10px;">
+                <span class="small" style="color: var(--accent);">Fórmula (Receta en gramos/unidades):</span>
+                <label class="label" style="margin-top: 6px;">
+                  <span>Código Materia Prima 1</span>
+                  <input id="form-mp1-codigo" type="text" placeholder="Ej: MP-01" />
+                </label>
+                <label class="label">
+                  <span>Cantidad Necesaria por unidad</span>
+                  <input id="form-mp1-cant" type="number" placeholder="Ej: 100" />
+                </label>
+              </div>
+
+              <button class="btn" type="submit">Guardar Producto</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3 class="card__title">Ingresar Materia Prima (Aumentar Stock)</h3>
+            <form id="form-stock" class="form" autocomplete="off">
+              <label class="label">
+                <span>Código del Producto</span>
+                <input id="stock-codigo" type="text" required placeholder="Ej: MP-01" />
+              </label>
+              <label class="label">
+                <span>Cantidad a Aumentar</span>
+                <input id="stock-cantidad" type="number" min="1" required placeholder="Ej: 500" />
+              </label>
+              <button class="btn btn--alt" type="submit">Incrementar Saldo</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 14px;">
+          <h3 class="card__title">Inventario Actual</h3>
+          <input id="inventario-buscar" type="text" placeholder="🔍 Filtrar productos por nombre o código..." style="margin-bottom: 14px;" />
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+              <thead>
+                <tr style="border-bottom: 2px solid var(--accent); text-align: left;">
+                  <th style="padding: 8px;">Código</th>
+                  <th style="padding: 8px;">Nombre</th>
+                  <th style="padding: 8px;">Proveedor</th>
+                  <th style="padding: 8px;">Stock</th>
+                  <th style="padding: 8px;">Tipo</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-inventario-body">
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="sub-produccion" style="display: none;">
+        <div class="grid">
+          <div class="card">
+            <h3 class="card__title">Iniciar Proceso Productivo</h3>
+            <form id="form-produccion" class="form" autocomplete="off">
+              <label class="label">
+                <span>Código del Producto Terminado</span>
+                <input id="orden-codigo" type="text" required placeholder="Ej: PT-01" />
+              </label>
+              <label class="label">
+                <span>Cantidad a Fabricar</span>
+                <input id="orden-cantidad" type="number" min="1" required placeholder="Ej: 10" />
+              </label>
+              <button class="btn" type="submit">Ejecutar Transformación</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3 class="card__title">Resumen del Último Proceso</h3>
+            <div id="resumen-produccion-box" style="font-size: 0.9rem; color: var(--muted);">
+              <p>Ningún proceso ejecutado en esta sesión.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
