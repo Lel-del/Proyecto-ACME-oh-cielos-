@@ -67,27 +67,51 @@
                 <input id="prod-es-terminado" type="checkbox" style="width: auto; margin: 0;" />
                 <span>¿Es producto terminado (requiere fórmula)?</span>
               </label>
+              
               <div id="wrapper-formula" style="display: none; border-top: 1px dashed rgba(244, 240, 212, 0.2); padding-top: 10px;">
-                <span class="small" style="color: var(--accent);">Receta Base por unidad:</span>
-                <acme-input id="form-mp-codigo" label="Código Materia Prima" placeholder="Ej: MP-01"></acme-input>
-                <acme-input id="form-mp-cant" label="Cantidad Requerida" type="number" placeholder="Ej: 100"></acme-input>
+                <span class="small" style="color: var(--accent); font-weight: bold;">Fórmula / Receta del Producto:</span>
+                <div style="display: flex; gap: 10px; align-items: flex-end; margin-bottom: 10px;">
+                  <acme-input id="form-mp-codigo" label="Cód. Materia Prima" placeholder="Ej: MP-01" style="flex: 1;"></acme-input>
+                  <acme-input id="form-mp-cant" label="Cantidad Requerida" type="number" placeholder="Ej: 100" style="flex: 1;"></acme-input>
+                  <button type="button" id="btn-add-ingrediente" class="btn" style="width: auto; padding: 10px 15px; margin-bottom: 6px;">➕</button>
+                </div>
+                <ul id="lista-ingredientes-agregados" style="font-size: 0.85rem; color: var(--accent-2); margin-bottom: 12px; padding-left: 20px;"></ul>
               </div>
+
               <acme-button type="primary" submit="true">Guardar Producto</acme-button>
             </form>
           </div>
+
           <div class="card">
             <h3 class="card__title">Ingresar Materia Prima (Aumentar Stock)</h3>
-            <form id="form-stock" class="form" autocomplete="off">
+            <form id="form-add-stock" class="form" autocomplete="off">
               <acme-input id="stock-codigo" label="Código del Producto" placeholder="Ej: MP-01" required></acme-input>
               <acme-input id="stock-cantidad" label="Cantidad a Aumentar" type="number" min="1" required></acme-input>
               <acme-button type="alt" submit="true">Incrementar Saldo</acme-button>
             </form>
           </div>
         </div>
+
         <div class="card" style="margin-top: 14px;">
           <h3 class="card__title">Inventario Actual</h3>
-          <acme-input id="inventario-buscar" label="🔍 Filtrar por nombre o código" placeholder="Buscar..."></acme-input>
-          <acme-table id="tabla-inventario"></acme-table>
+          <label class="label">
+            <span>🔍 Filtrar por nombre o código</span>
+            <input type="text" id="search-inventario" placeholder="Buscar..." style="width: 100%; margin-top: 4px;" />
+          </label>
+          <div style="overflow-x: auto; margin-top: 10px;">
+            <table id="tabla-inventario" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+              <thead>
+                <tr style="border-bottom: 2px solid var(--accent); text-align: left;">
+                  <th style="padding: 8px;">Código</th>
+                  <th style="padding: 8px;">Nombre</th>
+                  <th style="padding: 8px;">Proveedor</th>
+                  <th style="padding: 8px;">Tipo</th>
+                  <th style="padding: 8px;">Stock</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
       </div>
 

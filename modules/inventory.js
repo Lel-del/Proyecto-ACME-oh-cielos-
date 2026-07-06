@@ -2,131 +2,131 @@ import { DataManager } from "../data/dataManager.js";
 import { showMessage } from "../js/main.js";
 
 export let cachedProducts = {};
-let cachedUsers = {};
+let ingredientesTemporales = [];
 
-export function refreshInventoryTable() {
-  cachedProducts = DataManager.getTodosLosProductos();
-  renderProducts("");
-}
-
-function renderProducts(filtro) {
-  const acmeTable = document.getElementById("tabla-inventario");
-  const query = filtro.toLowerCase();
-
-  const headers = ["Código", "Nombre", "Proveedor", "Stock", "Tipo"];
-  const rows = Object.values(cachedProducts)
-    .filter(p => p.codigo.toLowerCase().includes(query) || p.nombre.toLowerCase().includes(query))
-    .map(p => ({
-      cells: [
-        `<span style="color:var(--accent);">${p.codigo}</span>`,
-        p.nombre,
-        `<span style="color:var(--muted);">${p.proveedor}</span>`,
-        `<strong>${p.stock}</strong>`,
-        p.esTerminado ? "Terminado" : "Materia Prima"
-      ]
-    }));
-
-  acmeTable.build(headers, rows);
-}
-
-function refreshUsersTable() {
-  cachedUsers = DataManager.getTodosLosUsuarios();
-  const acmeTable = document.getElementById("tabla-usuarios");
-
-  const headers = ["ID", "Nombre", "Cargo", "Acciones"];
-  const rows = Object.values(cachedUsers).map(u => ({
-    id: u.id,
-    cells: [u.id, u.name, u.role]
-  }));
-
-  acmeTable.build(headers, rows, (action, id) => {
-    if (action === "edit") {
-      const u = cachedUsers[id];
-      document.getElementById("edit-user-id").value = u.id;
-      document.getElementById("edit-user-name").value = u.name;
-      document.getElementById("edit-user-role").value = u.role;
-      document.getElementById("edit-user-password").value = u.password;
-    } else if (action === "delete") {
-      if (confirm(`¿Dar de baja al operario con ID ${id}?`)) {
-        DataManager.removeUsuario(id);
-        showMessage("Operario dado de baja.");
-        refreshUsersTable();
-      }
+export async function refreshInventoryTable() {
+  const table = document.getElementById("tabla-inventario");
+  if (!table) return;
+  const data = await DataManager.getTodosLosProductos();
+  cachedProducts = data;
+  
+  const tbody = table.querySelector("tbody") || table;
+  tbody.innerHTML = "";
+  
+  const buscar = document.getElementById("search-inventario")?.value.toLowerCase() || "";
+  
+  Object.keys(data).forEach(id => {
+    const prod = data[id];
+    if (prod.nombre.toLowerCase().includes(buscar) || prod.codigo.toLowerCase().includes(buscar)) {
+      const tr = document.createElement("tr");
+      
+      const tdCod = document.createElement("td");
+      tdCod.textContent = prod.codigo;
+      tr.appendChild(tdCod);
+      
+      const tdNom = document.createElement("td");
+      tdNom.textContent = prod.nombre;
+      tr.appendChild(tdNom);
+      
+      const tdProv = document.createElement("td");
+      tdProv.textContent = prod.proveedor;
+      tr.appendChild(tdProv);
+      
+      const tdTipo = document.createElement("td");
+      tdTipo.textContent = prod.esTerminado ? "Terminado" : "Materia Prima";
+      tr.appendChild(tdTipo);
+      
+      const tdStock = document.createElement("td");
+      tdStock.textContent = prod.stock || 0;
+      tr.appendChild(tdStock);
+      
+      tbody.appendChild(tr);
     }
   });
 }
 
 export function initInventoryEvents() {
   refreshInventoryTable();
-
-  window.addEventListener("recargar-usuarios", () => {
-    refreshUsersTable();
+  
+  document.getElementById("search-inventario")?.addEventListener("input", () => {
+    refreshInventoryTable();
   });
 
   const cbTerminado = document.getElementById("prod-es-terminado");
   const wrapFormula = document.getElementById("wrapper-formula");
-  cbTerminado.addEventListener("change", () => {
-    wrapFormula.style.display = cbTerminado.checked ? "block" : "none";
+  const listaVisual = document.getElementById("lista-ingredientes-agregados");
+
+  if (cbTerminado) {
+    cbTerminado.addEventListener("change", () => {
+      wrapFormula.style.display = cbTerminado.checked ? "block" : "none";
+      ingredientesTemporales = [];
+      listaVisual.innerHTML = "";
+    });
+  }
+
+  document.getElementById("btn-add-ingrediente")?.addEventListener("click", () => {
+    const codMP = document.getElementById("form-mp-codigo").value.trim();
+    const cantMP = parseInt(document.getElementById("form-mp-cant").value);
+
+    if (!codMP || !cantMP) {
+      alert("Por favor digita el código y la cantidad del ingrediente.");
+      return;
+    }
+
+    ingredientesTemporales.push({ materiaCodigo: codMP, cantidadRequerida: cantMP });
+    
+    const li = document.createElement("li");
+    li.textContent = `• Insumo: ${codMP} → Requiere: ${cantMP} unidades.`;
+    listaVisual.appendChild(li);
+
+    document.getElementById("form-mp-codigo").value = "";
+    document.getElementById("form-mp-cant").value = "";
   });
 
-  document.getElementById("inventario-buscar").addEventListener("input", (e) => {
-    renderProducts(e.target.value);
-  });
-
-  document.getElementById("form-producto").addEventListener("submit", (e) => {
+  document.getElementById("form-producto")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const codigo = document.getElementById("prod-codigo").value.trim();
     const nombre = document.getElementById("prod-nombre").value.trim();
     const proveedor = document.getElementById("prod-proveedor").value.trim();
-    const esTerminado = cbTerminado.checked;
+    const esTerminado = cbTerminado ? cbTerminado.checked : false;
 
-    let formula = null;
-    if (esTerminado) {
-      formula = {
-        materiaCodigo: document.getElementById("form-mp-codigo").value.trim(),
-        cantidadRequerida: parseInt(document.getElementById("form-mp-cant").value) || 0
-      };
+    if (esTerminado && ingredientesTemporales.length === 0) {
+      alert("Debes agregar al menos un ingrediente a la fórmula del producto terminado.");
+      return;
     }
 
-    DataManager.saveProducto(codigo, { codigo, nombre, proveedor, stock: 0, esTerminado, formula });
-    showMessage("Ficha de producto almacenada.");
+    await DataManager.saveProducto(codigo, {
+      codigo,
+      nombre,
+      proveedor,
+      stock: 0,
+      esTerminado,
+      formula: esTerminado ? ingredientesTemporales : null
+    });
+
+    showMessage("Ficha de producto almacenada con su fórmula completa.");
     document.getElementById("form-producto").reset();
-    wrapFormula.style.display = "none";
+    if (wrapFormula) wrapFormula.style.display = "none";
+    if (listaVisual) listaVisual.innerHTML = "";
+    ingredientesTemporales = [];
     refreshInventoryTable();
   });
 
-  document.getElementById("form-stock").addEventListener("submit", (e) => {
+  document.getElementById("form-add-stock")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const codigo = document.getElementById("stock-codigo").value.trim();
     const cantidad = parseInt(document.getElementById("stock-cantidad").value);
 
     if (!cachedProducts[codigo]) {
-      showMessage("Código inexistente.", true);
+      showMessage("El producto especificado no existe.", true);
       return;
     }
 
     const nuevoStock = (cachedProducts[codigo].stock || 0) + cantidad;
-    DataManager.updateStock(codigo, nuevoStock);
-    showMessage("Saldo incrementado en inventario.");
-    document.getElementById("form-stock").reset();
+    await DataManager.updateStock(codigo, nuevoStock);
+    
+    showMessage("Inventario actualizado correctamente.");
+    document.getElementById("form-add-stock").reset();
     refreshInventoryTable();
-  });
-
-  document.getElementById("form-editar-usuario").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const id = document.getElementById("edit-user-id").value;
-    if (!id) return;
-
-    const actualizados = {
-      id,
-      name: document.getElementById("edit-user-name").value.trim(),
-      role: document.getElementById("edit-user-role").value.trim(),
-      password: document.getElementById("edit-user-password").value
-    };
-
-    DataManager.saveUsuario(id, actualizados);
-    showMessage("Datos de personal actualizados.");
-    document.getElementById("form-editar-usuario").reset();
-    refreshUsersTable();
   });
 }
