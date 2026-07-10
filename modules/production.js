@@ -44,7 +44,18 @@ export function initProductionEvents() {
     const numeroOrden = await DataManager.getConsecutivoProduccion();
     await DataManager.updateConsecutivoProduccion(numeroOrden + 1);
 
-    showMessage(`Proceso Exitoso. Registrada Orden N° ${numeroOrden}`);
+    const de = new Date();
+    const fechaActual = `${de.getFullYear()}-${String(de.getMonth() + 1).padStart(2, '0')}-${String(de.getDate()).padStart(2, '0')}`;
+
+    await DataManager.saveOrdenProduccion(numeroOrden, {
+      numeroOrden,
+      codigoPT,
+      nombrePT: productoPT.nombre,
+      cantidadAFabricar,
+      fecha: fechaActual
+    });
+
+    showMessage(`Proceso Exitoso. Registrada Orden N° ${numeroOrden} el día ${fechaActual}`);
     document.getElementById("form-produccion").reset();
     refreshInventoryTable();
 

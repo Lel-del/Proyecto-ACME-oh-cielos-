@@ -54,5 +54,26 @@ export const DataManager = {
       method: "PUT",
       body: nuevoNum
     });
+  },
+
+  async saveOrdenProduccion(numeroOrden, datos) {
+    return await fetch(`${URL_BASE}/ordenes/${numeroOrden}.json`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos)
+    });
+  },
+
+  async getTodasLasOrdenes() {
+    const res = await fetch(`${URL_BASE}/ordenes.json`);
+    return (await res.json()) || {};
+  },
+
+  async updateOrdenProduccion(numeroOrden, nuevosDatos) {
+    return await fetch(`${URL_BASE}/ordenes/${numeroOrden}.json`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(nuevosDatos)
+    });
   }
 };

@@ -48,10 +48,11 @@
         <h2 class="card__title" style="color: var(--accent-2);">Panel de Control ACME</h2>
         <p id="welcome-text"></p>
         
-        <div style="display: flex; gap: 10px; margin-top: 14px;">
+        <div style="display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;">
           <acme-button id="btn-tab-inventario" type="primary">📦 Inventario</acme-button>
-          <acme-button id="btn-tab-produccion" type="alt">🏭 Producción</acme-button>
+          <acme-button id="btn-tab-produccion" type="alt">🏭 Production</acme-button>
           <acme-button id="btn-tab-usuarios" type="primary" style="--accent: #9c27b0;">👥 Usuarios</acme-button>
+          <acme-button id="btn-tab-reportes" type="alt" style="--accent: #ff9800;">📊 Reportes</acme-button>
         </div>
       </div>
 
@@ -146,7 +147,43 @@
           </div>
           <div class="card">
             <h3 class="card__title">Personal Registrado</h3>
-            <acme-table id="tabla-usuarios"></acme-table>
+            <table id="tabla-usuarios" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;"></table>
+          </div>
+        </div>
+      </div>
+
+      <div id="subpanel-reportes" style="display: none;">
+        <div class="grid">
+          <div class="card">
+            <h3 class="card__title">Reporte de Productos Fabricados</h3>
+            <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 14px;">
+              <acme-input id="rep-fecha-inicio" label="Fecha Inicial" type="date" style="flex: 1; min-width: 150px;"></acme-input>
+              <acme-input id="rep-fecha-fin" label="Fecha Final" type="date" style="flex: 1; min-width: 150px;"></acme-input>
+              <acme-button id="btn-generar-reporte" type="primary" style="width: auto; height: 42px; margin-bottom: 6px;">Generar Filtro</acme-button>
+            </div>
+            <div style="overflow-x: auto;">
+              <table id="tabla-reporte" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--accent); text-align: left;">
+                    <th style="padding: 8px;">Código</th>
+                    <th style="padding: 8px;">Nombre Producto</th>
+                    <th style="padding: 8px;">Cantidad</th>
+                    <th style="padding: 8px;">Fecha</th>
+                    <th style="padding: 8px; text-align: center;">Acción</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card__title">Modificar Fecha de Orden</h3>
+            <form id="form-editar-orden" class="form" autocomplete="off">
+              <acme-input id="edit-orden-id" label="N° de Orden (No modificable)" readonly></acme-input>
+              <acme-input id="edit-orden-fecha" label="Nueva Fecha" type="date" required></acme-input>
+              <acme-button type="primary" submit="true" style="--accent: #ff9800;">Actualizar Fecha</acme-button>
+            </form>
           </div>
         </div>
       </div>
